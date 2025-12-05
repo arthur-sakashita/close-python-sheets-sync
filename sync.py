@@ -4,102 +4,156 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 
-
 # -----------------------------
 # CloseCRM Setup
 # -----------------------------
-
 CLOSE_API_KEY = os.getenv("CLOSE_API_KEY")
 CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
-
 
 # -----------------------------
 # Google Sheets Setup
 # -----------------------------
-
 GOOGLE_SA_FILE = "service-account.json"
+SHEET_ID = os.getenv("SHEET_ID")
+TAB_NAME = "Sheet11"
+TARGET_CELL = "B2"   # Change if needed
 
-# Load service account JSON correctly
 with open(GOOGLE_SA_FILE, "r") as f:
     service_account_info = json.load(f)
-
-print("DEBUG: Loaded service account email →", service_account_info.get("client_email"))
 
 credentials = Credentials.from_service_account_info(
     service_account_info,
     scopes=["https://www.googleapis.com/auth/spreadsheets"]
 )
 
-gc_global = gspread.authorize(credentials)
-
-SHEET_ID = os.getenv("SHEET_ID")
-TAB_NAME = "Sheet11"  # Google Sheets tab name
-
-
-def authorize_google():
-    """Return an authorized gspread client."""
-    # We ALREADY loaded the JSON above, no need to reload or json.loads anything
-    return gc_global
-
+gc = gspread.authorize(credentials)
+sheet = gc.open_by_key(SHEET_ID).worksheet(TAB_NAME)
 
 # -----------------------------
-# Define all filters + cells here
+# Your JSON Filter
 # -----------------------------
-
-METRICS = [
-    {
-        "name": "New leads this week",
-        "cell": "B2",
-        "filter": {
-            "query": {
-                "type": "and",
-                "queries": [
-                    {"type": "field", "field": "lead.status_label", "value": "New"},
-                    {"type": "daterange", "field": "lead.created_at", "range": "this_week"}
-                ]
+CUSTOM_FILTER = {
+    "limit": None,
+    "query": {
+        "negate": False,
+        "queries": [
+            {
+                "negate": False,
+                "object_type": "lead",
+                "type": "object_type"
             },
-            "type": "lead",
-            "limit": 200
-        }
+            {
+                "negate": False,
+                "queries": [
+                    {
+                        "negate": False,
+                        "queries": [
+                            {
+                                "negate": False,
+                                "queries": [
+                                    {
+                                        "condition": {
+                                            "type": "term",
+                                            "values": [
+                                                "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                            ]
+                                        },
+                                        "field": {
+                                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                            "type": "custom_field"
+                                        },
+                                        "negate": False,
+                                        "type": "field_condition"
+                                    }
+                                ],
+                                "type": "or"
+                            },
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": False,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "type": "term",
+                                                "values": [
+                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                                ]
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            },
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": False,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "mode": "beginning_of_words",
+                                                "type": "text",
+                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            }
+                        ],
+                        "type": "or"
+                    }
+                ],
+                "type": "and"
+            }
+        ],
+        "type": "and"
     },
-    {
-        "name": "Lost leads this week",
-        "cell": "B3",
-        "filter": {
-            "query": {
-                "type": "and",
-                "queries": [
-                    {"type": "field", "field": "lead.status_label", "value": "Lost"},
-                    {"type": "daterange", "field": "lead.updated_at", "range": "this_week"}
-                ]
-            },
-            "type": "lead",
-            "limit": 200
+    "results_limit": None,
+    "sort": [
+        {
+            "direction": "desc",
+            "field": {
+                "field_name": "max_opportunity_annualized_annualized_value",
+                "object_type": "lead",
+                "type": "regular_field"
+            }
+        },
+        {
+            "direction": "asc",
+            "field": {
+                "field_name": "date_updated",
+                "object_type": "lead",
+                "type": "regular_field"
+            }
         }
-    },
-    {
-        "name": "Unassigned leads",
-        "cell": "B4",
-        "filter": {
-            "query": {
-                "type": "and",
-                "queries": [
-                    {"type": "field", "field": "lead.owner_id", "exists": False}
-                ]
-            },
-            "type": "lead",
-            "limit": 200
-        }
-    }
-]
+    ]
+}
 
 
 # -----------------------------
-# CloseCRM API Helper
+# Run the filter on CloseCRM
 # -----------------------------
-
 def run_close_filter(json_filter):
-    """Run JSON filter query against CloseCRM."""
     response = requests.post(
         CLOSE_API_URL,
         auth=(CLOSE_API_KEY, ""),
@@ -111,40 +165,26 @@ def run_close_filter(json_filter):
         print("❌ CloseCRM error:", response.text)
         return None
 
-    data = response.json().get("data", [])
-    return len(data)
-
+    return len(response.json().get("data", []))
 
 # -----------------------------
-# Main Sync Logic
+# MAIN
 # -----------------------------
-
 def main():
-    print("🚀 Running Multi-Metric CloseCRM → Google Sheets Sync...")
-    
-    gc = authorize_google()
-    sheet = gc.open_by_key(SHEET_ID).worksheet(TAB_NAME)
+    print("🚀 Running CloseCRM → Google Sheets Sync")
 
-    for metric in METRICS:
-        name = metric["name"]
-        cell = metric["cell"]
-        json_filter = metric["filter"]
+    count = run_close_filter(CUSTOM_FILTER)
 
-        print(f"\n📡 Running filter: {name}...")
+    if count is None:
+        print("❌ API error — no update written.")
+        return
 
-        count = run_close_filter(json_filter)
+    print(f"📊 Leads matching filter: {count}")
+    print(f"📝 Writing to {TAB_NAME} cell {TARGET_CELL}")
 
-        if count is None:
-            print(f"❌ Skipping '{name}' due to API error.")
-            continue
+    sheet.update_acell(TARGET_CELL, count)
 
-        print(f"📊 {name}: {count}")
-        print(f"📝 Writing to {TAB_NAME} cell {cell}...")
-
-        sheet.update_acell(cell, count)
-
-    print("\n✅ Sync complete! All metrics updated.")
-
+    print("✅ Sync complete!")
 
 if __name__ == "__main__":
     main()
