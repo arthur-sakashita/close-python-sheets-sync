@@ -163,7 +163,7 @@ BLOOMFIRE_FILTER = {
     "include_counts": True,
     "results_limit": 0,
     "_limit":200,
-    "cursor":"5",
+    "cursor":5,
     "sort": []
 }
 
