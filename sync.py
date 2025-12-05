@@ -164,7 +164,160 @@ BLOOMFIRE_FILTER = {
     "sort": []
 }
 
-
+BLOOMFIRE_FILTER_STEP_2 {
+    "query": {
+        "negate": False,
+        "queries": [
+            {
+                "negate": False,
+                "object_type": "lead",
+                "type": "object_type"
+            },
+            {
+                "negate": False,
+                "queries": [
+                    {
+                        "negate": False,
+                        "queries": [
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": False,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "type": "term",
+                                                "values": [
+                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                                ]
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
+                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
+                                                ],
+                                                "reference_type": "user_or_group",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "created_by",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "stat_Pfg508ZKowsARoHgVBGBr737ljxzvaBPcON1eewUIAa",
+                                                    "stat_RXYwGx35wxaN7HpXzFZypzziSNStNhU8DbAubiYCYqN",
+                                                    "stat_YT6FT80bYevLAZZ7TBfssC3HOv2vE4tuwm3JUsA3pGK",
+                                                    "stat_YoWvU5LYlJHYPpXWymsEqYLfYdvEkK478a67uNpOsHu",
+                                                    "stat_a3WmjtQUhDOwKqVXMwEb3Ewpm4RINU6noKvBQYpp5U3"
+                                                ],
+                                                "reference_type": "status.opportunity",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "status_id",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            },
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": False,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "mode": "beginning_of_words",
+                                                "type": "text",
+                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
+                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
+                                                ],
+                                                "reference_type": "user_or_group",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "created_by",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "stat_Pfg508ZKowsARoHgVBGBr737ljxzvaBPcON1eewUIAa",
+                                                    "stat_RXYwGx35wxaN7HpXzFZypzziSNStNhU8DbAubiYCYqN",
+                                                    "stat_YT6FT80bYevLAZZ7TBfssC3HOv2vE4tuwm3JUsA3pGK",
+                                                    "stat_YoWvU5LYlJHYPpXWymsEqYLfYdvEkK478a67uNpOsHu",
+                                                    "stat_a3WmjtQUhDOwKqVXMwEb3Ewpm4RINU6noKvBQYpp5U3"
+                                                ],
+                                                "reference_type": "status.opportunity",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "status_id",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            }
+                        ],
+                        "type": "or"
+                    }
+                ],
+                "type": "and"
+            }
+        ],
+        "type": "and"
+    },
+    
+            }
+        }
+    ]
+}
 
 # =============================================================================
 # 📌 LIST OF METRICS TO WRITE INTO GOOGLE SHEETS
@@ -174,6 +327,11 @@ SEARCHES = [
         "name": "Bloomfire - Principal Search Engineer",
         "cell": "B2",
         "filter": BLOOMFIRE_FILTER
+    }
+        {
+        "name": "Bloomfire - Principal Search Engineer step 2",
+        "cell": "B3",
+        "filter": BLOOMFIRE_FILTER_STEP_2
     }
 ]
 
