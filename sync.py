@@ -33,30 +33,41 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 BLOOMFIRE_FILTER = {
     "query": {
+        "negate": false,
         "queries": [
             {
+                "negate": false,
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
+                "negate": false,
                 "queries": [
                     {
-                        "queries": [
-                            {
-                                "condition": {
-                                    "type": "term",
-                                    "values": [
-                                        "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                    ]
-                                },
-                                "field": {
-                                    "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                    "type": "custom_field"
-                                },
-                                "type": "field_condition"
-                            }
-                        ],
-                        "type": "and"
+                        "negate": false,
+                        "related_object_type": "opportunity",
+                        "related_query": {
+                            "negate": false,
+                            "queries": [
+                                {
+                                    "condition": {
+                                        "type": "term",
+                                        "values": [
+                                            "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                        ]
+                                    },
+                                    "field": {
+                                        "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                        "type": "custom_field"
+                                    },
+                                    "negate": false,
+                                    "type": "field_condition"
+                                }
+                            ],
+                            "type": "and"
+                        },
+                        "this_object_type": "lead",
+                        "type": "has_related"
                     }
                 ],
                 "type": "and"
@@ -64,7 +75,7 @@ BLOOMFIRE_FILTER = {
         ],
         "type": "and"
     },
-    "results_limit": 1000,
+    "results_limit": 2000,
     "sort": []
 }
 
