@@ -45,29 +45,114 @@ BLOOMFIRE_FILTER = {
                 "queries": [
                     {
                         "negate": False,
-                        "related_object_type": "opportunity",
-                        "related_query": {
-                            "negate": False,
-                            "queries": [
-                                {
-                                    "condition": {
-                                        "type": "term",
-                                        "values": [
-                                            "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                        ]
-                                    },
-                                    "field": {
-                                        "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                        "type": "custom_field"
-                                    },
+                        "queries": [
+                            {
+                                "negate": False,
+                                "queries": [
+                                    {
+                                        "condition": {
+                                            "type": "term",
+                                            "values": [
+                                                "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                            ]
+                                        },
+                                        "field": {
+                                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                            "type": "custom_field"
+                                        },
+                                        "negate": False,
+                                        "type": "field_condition"
+                                    }
+                                ],
+                                "type": "or"
+                            },
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
                                     "negate": False,
-                                    "type": "field_condition"
-                                }
-                            ],
-                            "type": "and"
-                        },
-                        "this_object_type": "lead",
-                        "type": "has_related"
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "type": "term",
+                                                "values": [
+                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                                ]
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
+                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
+                                                ],
+                                                "reference_type": "user_or_group",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "created_by",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            },
+                            {
+                                "negate": False,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": False,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "mode": "beginning_of_words",
+                                                "type": "text",
+                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        },
+                                        {
+                                            "condition": {
+                                                "object_ids": [
+                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
+                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
+                                                ],
+                                                "reference_type": "user_or_group",
+                                                "type": "reference"
+                                            },
+                                            "field": {
+                                                "field_name": "created_by",
+                                                "object_type": "opportunity",
+                                                "type": "regular_field"
+                                            },
+                                            "negate": False,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            }
+                        ],
+                        "type": "or"
                     }
                 ],
                 "type": "and"
@@ -76,8 +161,8 @@ BLOOMFIRE_FILTER = {
         "type": "and"
     },
     "include_counts": True,
-    "results_limit": 20,
-    "_limit":20,
+    "results_limit": 0,
+    "_limit":400,
     "sort": []
 }
 
