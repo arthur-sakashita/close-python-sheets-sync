@@ -165,17 +165,10 @@ BLOOMFIRE_FILTER = {
 }
 
 
-# =============================================================================
-# 📌 LIST OF METRICS TO WRITE INTO GOOGLE SHEETS
-# =============================================================================
-SEARCHES = [
-    {
-        "name": "Bloomfire - Principal Search Engineer",
-        "cell": "B2",
-        "filter": BLOOMFIRE_FILTER
-    }
-       
-]
+# Load list of searches from external JSON
+with open("searches.json", "r") as f:
+    SEARCHES = json.load(f)
+
 
 
 # =============================================================================
@@ -226,22 +219,27 @@ def main():
     sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
     for search in SEARCHES:
-        name = search["name"]
-        cell = search["cell"]
-        json_filter = search["filter"]
+    name = search["name"]
+    cell = search["cell"]
 
-        print(f"📌 Processing: {name}")
+    # Load filter JSON file
+    filter_path = os.path.join("filters", search["filter_file"])
+    with open(filter_path, "r") as f:
+        json_filter = json.load(f)
 
-        count = run_close_query(json_filter)
+    print(f"📌 Processing search: {name}")
 
-        if count is None:
-            print(f"❌ Error for search {name}")
-            continue
+    count = run_close_query(json_filter)
 
-        print(f"   ✅ Count: {count}")
-        print(f"   ✏️ Writing to sheet cell {cell}")
+    if count is None:
+        print(f"❌ Error while processing {name}")
+        continue
 
-        sheet.update_acell(cell, count)
+    print(f"   ✅ Leads matching filter: {count}")
+    print(f"   ✏️ Writing value to {SHEET_NAME} cell {cell}")
+
+    sheet.update_acell(cell, count)
+
 
     print("\n🎉 Sync complete.\n")
 
