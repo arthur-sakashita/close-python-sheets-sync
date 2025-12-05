@@ -4,55 +4,142 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 
-# ------------------------
-#  CloseCRM Setup
-# ------------------------
+
+# -----------------------------
+# CloseCRM Setup
+# -----------------------------
+
 CLOSE_API_KEY = os.getenv("CLOSE_API_KEY")
-SMARTVIEW_ID = "your-smartview-id-here"  # you can hardcode or make a secret
+CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 
-CLOSE_API_URL = f"https://api.close.com/api/v1/saved_search/{SMARTVIEW_ID}/execute/"
 
-# ------------------------
-#  Google Sheets Setup
-# ------------------------
-service_account_info = json.loads(os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON"))
+# -----------------------------
+# Google Sheets Setup
+# -----------------------------
 
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
-credentials = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+GOOGLE_SA_FILE = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+SHEET_ID = os.getenv("SHEET_ID")
 
-gc = gspread.authorize(credentials)
-sheet = gc.open_by_key(os.getenv("SHEET_ID")).sheet1
+TAB_NAME = "Sheet11"  # Google Sheets tab name
 
-# ------------------------
-#  Fetch data from Close
-# ------------------------
-headers = {"Content-Type": "application/json"}
-auth = (CLOSE_API_KEY, "")  # API key as username, empty password
 
-response = requests.get(CLOSE_API_URL, auth=auth)
+def authorize_google():
+    """Authorize Google Sheets using the service account."""
 
-if response.status_code != 200:
-    print("Error fetching Close data:", response.text)
-    exit(1)
+    service_account_info = json.loads(GOOGLE_SA_FILE)
 
-close_data = response.json()
+    credentials = Credentials.from_service_account_info(
+        service_account_info,
+        scopes=["https://www.googleapis.com/auth/spreadsheets"]
+    )
 
-# Extract results (depends how your SmartView is structured)
-rows = close_data.get("data", [])
+    return gspread.authorize(credentials)
 
-# ------------------------
-#  Write into Google Sheets
-# ------------------------
 
-# Clear sheet
-sheet.clear()
+# -----------------------------
+# Define all filters + cells here
+# -----------------------------
 
-# Write header row
-if rows:
-    header = list(rows[0].keys())
-    sheet.append_row(header)
+METRICS = [
+    {
+        "name": "New leads this week",
+        "cell": "B2",
+        "filter": {
+            "query": {
+                "type": "and",
+                "queries": [
+                    {"type": "field", "field": "lead.status_label", "value": "New"},
+                    {"type": "daterange", "field": "lead.created_at", "range": "this_week"}
+                ]
+            },
+            "type": "lead",
+            "limit": 2000
+        }
+    },
+    {
+        "name": "Lost leads this week",
+        "cell": "B3",
+        "filter": {
+            "query": {
+                "type": "and",
+                "queries": [
+                    {"type": "field", "field": "lead.status_label", "value": "Lost"},
+                    {"type": "daterange", "field": "lead.updated_at", "range": "this_week"}
+                ]
+            },
+            "type": "lead",
+            "limit": 2000
+        }
+    },
+    {
+        "name": "Unassigned leads",
+        "cell": "B4",
+        "filter": {
+            "query": {
+                "type": "and",
+                "queries": [
+                    {"type": "field", "field": "lead.owner_id", "exists": False}
+                ]
+            },
+            "type": "lead",
+            "limit": 2000
+        }
+    }
+]
 
-    for row in rows:
-        sheet.append_row(list(row.values()))
+# You can add unlimited metrics.
 
-print("✅ Sync complete!")
+
+# -----------------------------
+# CloseCRM API Helper
+# -----------------------------
+
+def run_close_filter(json_filter):
+    """Run JSON filter query against CloseCRM."""
+    response = requests.post(
+        CLOSE_API_URL,
+        auth=(CLOSE_API_KEY, ""),
+        json=json_filter,
+        headers={"Content-Type": "application/json"}
+    )
+
+    if response.status_code != 200:
+        print("❌ CloseCRM error:", response.text)
+        return None
+
+    data = response.json().get("data", [])
+    return len(data)
+
+
+# -----------------------------
+# Main Sync Logic
+# -----------------------------
+
+def main():
+    print("🚀 Running Multi-Metric CloseCRM → Google Sheets Sync...")
+    gc = authorize_google()
+    sheet = gc.open_by_key(SHEET_ID).worksheet(TAB_NAME)
+
+    for metric in METRICS:
+        name = metric["name"]
+        cell = metric["cell"]
+        json_filter = metric["filter"]
+
+        print(f"\n📡 Running filter: {name}...")
+
+        count = run_close_filter(json_filter)
+
+        if count is None:
+            print(f"❌ Skipping '{name}' due to API error.")
+            continue
+
+        print(f"📊 {name}: {count}")
+        print(f"📝 Writing to {TAB_NAME} cell {cell}...")
+
+        sheet.update_acell(cell, count)
+
+    print("\n✅ Sync complete! All metrics updated.")
+
+
+if __name__ == "__main__":
+    main()
