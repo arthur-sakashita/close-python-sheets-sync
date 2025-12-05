@@ -10,7 +10,6 @@ from google.oauth2.service_account import Credentials
 CLOSE_API_KEY = os.getenv("CLOSE_API_KEY")
 CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 
-
 # -----------------------------
 # Google Sheets Setup
 # -----------------------------
@@ -28,18 +27,18 @@ gc = gspread.authorize(credentials)
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = "Sheet11"
 
-# Load list of searches from external JSON
+# -----------------------------
+# Load searches from searches.json
+# -----------------------------
 with open("searches.json", "r") as f:
     SEARCHES = json.load(f)
 
-
-
 # =============================================================================
-# 🔁 Updated Close CRM Pagination (Cursor Pagination)
+# 🔁 Close CRM Cursor Pagination
 # =============================================================================
 def run_close_query(json_filter):
     total_results = []
-    cursor = None  # cursor must start as None
+    cursor = None  # start without a cursor
 
     while True:
         payload = dict(json_filter)
@@ -65,13 +64,10 @@ def run_close_query(json_filter):
         # next cursor
         cursor = data.get("cursor")
 
-        # stop when cursor is null
         if cursor is None:
             break
 
     return len(total_results)
-
-
 
 # =============================================================================
 # 🚀 MAIN SYNC FUNCTION
@@ -82,6 +78,7 @@ def main():
     sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
     for search in SEARCHES:
+
         name = search["name"]
         cell = search["cell"]
 
@@ -104,6 +101,7 @@ def main():
         sheet.update_acell(cell, count)
 
     print("\n🎉 Sync complete.\n")
+
 
 if __name__ == "__main__":
     main()
