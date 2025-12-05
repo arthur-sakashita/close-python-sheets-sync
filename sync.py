@@ -107,7 +107,7 @@ SEARCHES = [
 def run_close_query(json_filter):
     total_results = []
     skip = 0
-    page_size = 100
+    page_size = 500
 
     while True:
         paginated_filter = dict(json_filter)
