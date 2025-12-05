@@ -19,6 +19,7 @@ CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 
 GOOGLE_SA_FILE = "service-account.json"
 
+# Load service account JSON correctly
 with open(GOOGLE_SA_FILE, "r") as f:
     service_account_info = json.load(f)
 
@@ -28,22 +29,17 @@ credentials = Credentials.from_service_account_info(
     service_account_info,
     scopes=["https://www.googleapis.com/auth/spreadsheets"]
 )
-SHEET_ID = os.getenv("SHEET_ID")
 
+gc_global = gspread.authorize(credentials)
+
+SHEET_ID = os.getenv("SHEET_ID")
 TAB_NAME = "Sheet11"  # Google Sheets tab name
 
 
 def authorize_google():
-    """Authorize Google Sheets using the service account."""
-
-    service_account_info = json.loads(GOOGLE_SA_FILE)
-
-    credentials = Credentials.from_service_account_info(
-        service_account_info,
-        scopes=["https://www.googleapis.com/auth/spreadsheets"]
-    )
-
-    return gspread.authorize(credentials)
+    """Return an authorized gspread client."""
+    # We ALREADY loaded the JSON above, no need to reload or json.loads anything
+    return gc_global
 
 
 # -----------------------------
@@ -63,7 +59,7 @@ METRICS = [
                 ]
             },
             "type": "lead",
-            "limit": 2000
+            "limit": 200
         }
     },
     {
@@ -78,7 +74,7 @@ METRICS = [
                 ]
             },
             "type": "lead",
-            "limit": 2000
+            "limit": 200
         }
     },
     {
@@ -92,12 +88,10 @@ METRICS = [
                 ]
             },
             "type": "lead",
-            "limit": 2000
+            "limit": 200
         }
     }
 ]
-
-# You can add unlimited metrics.
 
 
 # -----------------------------
@@ -127,6 +121,7 @@ def run_close_filter(json_filter):
 
 def main():
     print("🚀 Running Multi-Metric CloseCRM → Google Sheets Sync...")
+    
     gc = authorize_google()
     sheet = gc.open_by_key(SHEET_ID).worksheet(TAB_NAME)
 
