@@ -4,21 +4,15 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 
-
 # -----------------------------
 # CloseCRM Setup
 # -----------------------------
-
 CLOSE_API_KEY = os.getenv("CLOSE_API_KEY")
-CLOSE_SAVED_SEARCH_URL = "https://api.close.com/api/v1/saved_search/"
-CLOSE_SEARCH_URL = "https://api.close.com/api/v1/data/search/"
-
-
+CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 
 # -----------------------------
 # Google Sheets Setup
 # -----------------------------
-
 GOOGLE_SA_FILE = "service-account.json"
 
 with open(GOOGLE_SA_FILE, "r") as f:
@@ -30,122 +24,145 @@ credentials = Credentials.from_service_account_info(
 )
 
 gc = gspread.authorize(credentials)
+SHEET_ID = os.getenv("SHEET_ID")
+SHEET_NAME = "Sheet11"
 
 
-# -----------------------------
-# DEFINE ALL SAVED SEARCHES HERE
-# -----------------------------
+# =============================================================================
+# 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
+# =============================================================================
+BLOOMFIRE_FILTER = {
+    "query": {
+        "type": "or",
+        "queries": [
+            {
+                "type": "field_condition",
+                "field": {
+                    "type": "custom_field",
+                    "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
+                },
+                "condition": {
+                    "type": "term",
+                    "values": ["Bloomfire - Principal Search Engineer (OpenSearch)"]
+                }
+            },
+            {
+                "type": "has_related",
+                "this_object_type": "lead",
+                "related_object_type": "opportunity",
+                "related_query": {
+                    "type": "field_condition",
+                    "field": {
+                        "type": "custom_field",
+                        "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
+                    },
+                    "condition": {
+                        "type": "term",
+                        "values": ["Bloomfire - Principal Search Engineer (OpenSearch)"]
+                    }
+                }
+            },
+            {
+                "type": "has_related",
+                "this_object_type": "lead",
+                "related_object_type": "opportunity",
+                "related_query": {
+                    "type": "field_condition",
+                    "field": {
+                        "type": "custom_field",
+                        "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv"
+                    },
+                    "condition": {
+                        "type": "text",
+                        "mode": "beginning_of_words",
+                        "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                    }
+                }
+            }
+        ]
+    },
+    "limit": 5000
+}
 
-METRICS = [
+
+# =============================================================================
+# 📌 LIST OF METRICS TO WRITE INTO GOOGLE SHEETS
+# =============================================================================
+SEARCHES = [
     {
         "name": "Bloomfire - Principal Search Engineer",
-        "saved_search_id": "save_n75gvVtflCk7eBpqirqQzvc2hFSBzJNZSlWyXXs0djY",
-        "tab": "Sheet11",
-        "cell": "B2"
+        "cell": "B2",
+        "filter": BLOOMFIRE_FILTER
     },
-    # Add more saved searches here:
+    # Add more saved-search JSONs here:
     # {
-    #     "name": "Another Search",
-    #     "saved_search_id": "save_ABC123XYZ",
-    #     "tab": "Sheet11",
-    #     "cell": "B3"
-    # },
+    #     "name": "Another Saved Search",
+    #     "cell": "B3",
+    #     "filter": OTHER_FILTER_JSON
+    # }
 ]
 
 
+# =============================================================================
+# 🔁 Close CRM Query Helper (supports pagination)
+# =============================================================================
+def run_close_query(json_filter):
+    total_results = []
+    skip = 0
+    page_size = 100
 
-# -----------------------------
-# HELPERS
-# -----------------------------
+    while True:
+        paginated_filter = dict(json_filter)
+        paginated_filter["skip"] = skip
+        paginated_filter["limit"] = page_size
 
-def fetch_saved_search_query(saved_search_id):
-    """Pull the REAL internal query Close uses in the UI."""
-    url = f"{CLOSE_SAVED_SEARCH_URL}{saved_search_id}/"
-    resp = requests.get(url, auth=(CLOSE_API_KEY, ""))
-
-    if resp.status_code != 200:
-        print(f"❌ Error loading saved search {saved_search_id}: {resp.text}")
-        return None
-
-    return resp.json().get("query")
-
-
-def count_matching_leads(query):
-    """Run the Close search with pagination to count ALL leads."""
-    
-    payload = {
-        "query": query,
-        "type": "lead",
-        "limit": 100,         # Small page size = safe for pagination
-        "results_limit": 5000
-    }
-
-    total = 0
-    has_more = True
-
-    while has_more:
-        resp = requests.post(
-            CLOSE_SEARCH_URL,
+        response = requests.post(
+            CLOSE_API_URL,
             auth=(CLOSE_API_KEY, ""),
-            json=payload,
-            headers={"Content-Type": "application/json"}
+            json=paginated_filter
         )
 
-        if resp.status_code != 200:
-            print("❌ CloseCRM API error:", resp.text)
+        if response.status_code != 200:
+            print("\n❌ Close API error:", response.text)
             return None
 
-        data = resp.json()
-        batch = len(data.get("data", []))
-        total += batch
+        batch = response.json().get("data", [])
+        total_results.extend(batch)
 
-        cursor = data.get("cursor")
-        if cursor:
-            payload["cursor"] = cursor
-        else:
-            has_more = False
+        if len(batch) < page_size:
+            break
 
-    return total
+        skip += page_size
+
+    return len(total_results)
 
 
-
-# -----------------------------
-# MAIN SYNC PROCESS
-# -----------------------------
-
+# =============================================================================
+# 🚀 MAIN SYNC FUNCTION
+# =============================================================================
 def main():
-    print("🚀 Running Multi-Saved-Search CloseCRM → Google Sheets Sync...\n")
+    print("\n🔄 Running Multi-Saved-Search CloseCRM → Google Sheets Sync...\n")
 
-    for metric in METRICS:
-        name = metric["name"]
-        saved_search_id = metric["saved_search_id"]
-        tab = metric["tab"]
-        cell = metric["cell"]
+    sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
-        print(f"🔎 Processing: {name}")
-        print(f"   Saved Search ID: {saved_search_id}")
+    for search in SEARCHES:
+        name = search["name"]
+        cell = search["cell"]
+        json_filter = search["filter"]
 
-        # Load real internal Close query
-        query = fetch_saved_search_query(saved_search_id)
-        if query is None:
-            print(f"❌ Skipping {name} due to query fetch error.\n")
-            continue
+        print(f"📌 Processing search: {name}")
+        count = run_close_query(json_filter)
 
-        # Run search and count all matching leads
-        count = count_matching_leads(query)
         if count is None:
-            print(f"❌ Skipping {name} due to API error.\n")
+            print(f"   ❌ Skipping {name} due to API error.\n")
             continue
 
-        print(f"📊 Leads found: {count}")
+        print(f"   ✅ Leads matching filter: {count}")
+        print(f"   ✏️ Writing value to {SHEET_NAME} cell {cell}\n")
 
-        # Update Google Sheets
-        sheet = gc.open_by_key(os.getenv("SHEET_ID")).worksheet(tab)
         sheet.update_acell(cell, count)
-        print(f"📝 Updated {tab} cell {cell} with {count}\n")
 
-    print("✅ Sync complete! All saved searches updated.\n")
-
+    print("🎉 Sync complete! All saved searches updated.\n")
 
 
 if __name__ == "__main__":
