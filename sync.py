@@ -10,6 +10,7 @@ from google.oauth2.service_account import Credentials
 CLOSE_API_KEY = os.getenv("CLOSE_API_KEY")
 CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 
+
 # -----------------------------
 # Google Sheets Setup
 # -----------------------------
@@ -29,7 +30,7 @@ SHEET_NAME = "Sheet11"
 
 
 # =============================================================================
-# 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
+# 🔍 JSON FILTER (REMOVE _limit AND cursor)
 # =============================================================================
 BLOOMFIRE_FILTER = {
     "query": {
@@ -162,11 +163,8 @@ BLOOMFIRE_FILTER = {
     },
     "include_counts": True,
     "results_limit": 0,
-    "_limit":200,
-    "cursor":5,
     "sort": []
 }
-
 
 
 
@@ -178,48 +176,47 @@ SEARCHES = [
         "name": "Bloomfire - Principal Search Engineer",
         "cell": "B2",
         "filter": BLOOMFIRE_FILTER
-    },
-    # Add more saved-search JSONs here:
-    # {
-    #     "name": "Another Saved Search",
-    #     "cell": "B3",
-    #     "filter": OTHER_FILTER_JSON
-    # }
+    }
 ]
 
 
 # =============================================================================
-# 🔁 Close CRM Query Helper (supports pagination)
+# 🔁 Updated Close CRM Pagination (Cursor Pagination)
 # =============================================================================
 def run_close_query(json_filter):
     total_results = []
-    skip = 0
-    page_size = 500
+    cursor = None  # cursor must start as None
 
     while True:
-        paginated_filter = dict(json_filter)
-        paginated_filter["skip"] = skip
-        paginated_filter["limit"] = page_size
+        payload = dict(json_filter)
+        payload["_limit"] = 200
+        payload["cursor"] = cursor
 
         response = requests.post(
             CLOSE_API_URL,
             auth=(CLOSE_API_KEY, ""),
-            json=paginated_filter
+            json=payload
         )
 
         if response.status_code != 200:
             print("\n❌ Close API error:", response.text)
             return None
 
-        batch = response.json().get("data", [])
+        data = response.json()
+
+        # collect results
+        batch = data.get("data", [])
         total_results.extend(batch)
 
-        if len(batch) < page_size:
+        # next cursor
+        cursor = data.get("cursor")
+
+        # stop when cursor is null
+        if cursor is None:
             break
 
-        skip += page_size
-
     return len(total_results)
+
 
 
 # =============================================================================
@@ -235,19 +232,21 @@ def main():
         cell = search["cell"]
         json_filter = search["filter"]
 
-        print(f"📌 Processing search: {name}")
+        print(f"📌 Processing: {name}")
+
         count = run_close_query(json_filter)
 
         if count is None:
-            print(f"   ❌ Skipping {name} due to API error.\n")
+            print(f"❌ Error for search {name}")
             continue
 
-        print(f"   ✅ Leads matching filter: {count}")
-        print(f"   ✏️ Writing value to {SHEET_NAME} cell {cell}\n")
+        print(f"   ✅ Count: {count}")
+        print(f"   ✏️ Writing to sheet cell {cell}")
 
         sheet.update_acell(cell, count)
 
-    print("🎉 Sync complete! All saved searches updated.\n")
+    print("\n🎉 Sync complete.\n")
+
 
 
 if __name__ == "__main__":
