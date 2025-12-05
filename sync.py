@@ -33,21 +33,21 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 BLOOMFIRE_FILTER ={
     "query": {
-        "negate": False,
+
         "queries": [
             {
-                "negate": False,
+        
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
-                "negate": False,
+        
                 "queries": [
                     {
-                        "negate": False,
+                
                         "queries": [
                             {
-                                "negate": False,
+                        
                                 "queries": [
                                     {
                                         "condition": {
@@ -60,17 +60,17 @@ BLOOMFIRE_FILTER ={
                                             "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                             "type": "custom_field"
                                         },
-                                        "negate": False,
+                                
                                         "type": "field_condition"
                                     }
                                 ],
                                 "type": "or"
                             },
                             {
-                                "negate": False,
+                        
                                 "related_object_type": "opportunity",
                                 "related_query": {
-                                    "negate": False,
+                            
                                     "queries": [
                                         {
                                             "condition": {
@@ -83,7 +83,7 @@ BLOOMFIRE_FILTER ={
                                                 "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                                 "type": "custom_field"
                                             },
-                                            "negate": False,
+                                    
                                             "type": "field_condition"
                                         }
                                     ],
@@ -93,10 +93,10 @@ BLOOMFIRE_FILTER ={
                                 "type": "has_related"
                             },
                             {
-                                "negate": False,
+                        
                                 "related_object_type": "opportunity",
                                 "related_query": {
-                                    "negate": False,
+                            
                                     "queries": [
                                         {
                                             "condition": {
@@ -108,7 +108,7 @@ BLOOMFIRE_FILTER ={
                                                 "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
                                                 "type": "custom_field"
                                             },
-                                            "negate": False,
+                                    
                                             "type": "field_condition"
                                         }
                                     ],
