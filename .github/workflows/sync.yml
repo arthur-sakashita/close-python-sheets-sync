@@ -2,7 +2,7 @@ name: Close → Google Sheets Sync
 
 on:
   schedule:
-    - cron: "0 * * * *"   # Runs every hour — change if needed
+    - cron: "0 0 */3 * *"   # Runs every 3 days — change if needed
   workflow_dispatch:      # Allows manual run
 
 jobs:
