@@ -32,22 +32,23 @@ SHEET_NAME = "Sheet11"
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
 BLOOMFIRE_FILTER = {
+    "limit": 400,
     "query": {
-        "negate": False,
+        "negate": "false",
         "queries": [
             {
-                "negate": False,
+                "negate": "false",
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
-                "negate": False,
+                "negate": "false",
                 "queries": [
                     {
-                        "negate": False,
+                        "negate": "false",
                         "related_object_type": "opportunity",
                         "related_query": {
-                            "negate": False,
+                            "negate": "false",
                             "queries": [
                                 {
                                     "condition": {
@@ -60,7 +61,7 @@ BLOOMFIRE_FILTER = {
                                         "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                         "type": "custom_field"
                                     },
-                                    "negate": False,
+                                    "negate": "false",
                                     "type": "field_condition"
                                 }
                             ],
@@ -75,7 +76,7 @@ BLOOMFIRE_FILTER = {
         ],
         "type": "and"
     },
-    "results_limit": 2000,
+    "results_limit": 400,
     "sort": []
 }
 
