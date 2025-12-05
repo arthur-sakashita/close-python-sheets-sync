@@ -31,94 +31,38 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
-BLOOMFIRE_FILTER ={
+BLOOMFIRE_FILTER = {
+    "limit": "null",
     "query": {
-
+        "negate": "false",
         "queries": [
             {
-        
+                "negate": "false",
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
-        
+                "negate": "false",
                 "queries": [
                     {
-                
+                        "negate": "false",
                         "queries": [
                             {
-                        
-                                "queries": [
-                                    {
-                                        "condition": {
-                                            "type": "term",
-                                            "values": [
-                                                "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                            ]
-                                        },
-                                        "field": {
-                                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                            "type": "custom_field"
-                                        },
-                                
-                                        "type": "field_condition"
-                                    }
-                                ],
-                                "type": "or"
-                            },
-                            {
-                        
-                                "related_object_type": "opportunity",
-                                "related_query": {
-                            
-                                    "queries": [
-                                        {
-                                            "condition": {
-                                                "type": "term",
-                                                "values": [
-                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                                ]
-                                            },
-                                            "field": {
-                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                                "type": "custom_field"
-                                            },
-                                    
-                                            "type": "field_condition"
-                                        }
-                                    ],
-                                    "type": "and"
+                                "condition": {
+                                    "type": "term",
+                                    "values": [
+                                        "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                    ]
                                 },
-                                "this_object_type": "lead",
-                                "type": "has_related"
-                            },
-                            {
-                        
-                                "related_object_type": "opportunity",
-                                "related_query": {
-                            
-                                    "queries": [
-                                        {
-                                            "condition": {
-                                                "mode": "beginning_of_words",
-                                                "type": "text",
-                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
-                                            },
-                                            "field": {
-                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
-                                                "type": "custom_field"
-                                            },
-                                    
-                                            "type": "field_condition"
-                                        }
-                                    ],
-                                    "type": "and"
+                                "field": {
+                                    "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                    "type": "custom_field"
                                 },
-                                "this_object_type": "lead",
-                                "type": "has_related"
+                                "negate": "false",
+                                "type": "field_condition"
                             }
                         ],
-                        "type": "or"
+                        "type": "and"
                     }
                 ],
                 "type": "and"
@@ -126,7 +70,7 @@ BLOOMFIRE_FILTER ={
         ],
         "type": "and"
     },
-    "results_limit": 500,
+    "results_limit": "null",
     "sort": []
 }
 
