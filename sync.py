@@ -32,7 +32,6 @@ SHEET_NAME = "Sheet11"
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
 BLOOMFIRE_FILTER = {
-    "limit": 400,
     "query": {
         "negate": False,
         "queries": [
@@ -76,7 +75,8 @@ BLOOMFIRE_FILTER = {
         ],
         "type": "and"
     },
-    "results_limit": 400,
+    "include_counts": True
+    "results_limit": 0,
     "sort": []
 }
 
