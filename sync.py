@@ -32,72 +32,83 @@ SHEET_NAME = "Sheet11"
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
 BLOOMFIRE_FILTER = {
-  "query": {
-    "type": "or",
-    "queries": [
-      {
-        "type": "field_condition",
-        "field": {
-          "type": "custom_field",
-          "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
-        },
-        "condition": {
-          "type": "term",
-          "values": [
-            "Bloomfire - Principal Search Engineer (OpenSearch)"
-          ]
-        }
-      },
-      {
-        "type": "has_related",
-        "this_object_type": "lead",
-        "related_object_type": "opportunity",
-        "related_query": {
-          "type": "and",
-          "queries": [
+    "query": {
+        "type": "and",
+        "queries": [
             {
-              "type": "field_condition",
-              "field": {
-                "type": "custom_field",
-                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
-              },
-              "condition": {
-                "type": "term",
-                "values": [
-                  "Bloomfire - Principal Search Engineer (OpenSearch)"
+                "type": "object_type",
+                "object_type": "lead"
+            },
+            {
+                "type": "or",
+                "queries": [
+                    {
+                        "type": "field_condition",
+                        "negate": False,
+                        "field": {
+                            "type": "custom_field",
+                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
+                        },
+                        "condition": {
+                            "type": "term",
+                            "values": [
+                                "Bloomfire - Principal Search Engineer (OpenSearch)"
+                            ]
+                        }
+                    },
+                    {
+                        "type": "has_related",
+                        "this_object_type": "lead",
+                        "related_object_type": "opportunity",
+                        "related_query": {
+                            "type": "and",
+                            "queries": [
+                                {
+                                    "type": "field_condition",
+                                    "field": {
+                                        "type": "custom_field",
+                                        "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
+                                    },
+                                    "condition": {
+                                        "type": "term",
+                                        "values": [
+                                            "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "has_related",
+                        "this_object_type": "lead",
+                        "related_object_type": "opportunity",
+                        "related_query": {
+                            "type": "and",
+                            "queries": [
+                                {
+                                    "type": "field_condition",
+                                    "field": {
+                                        "type": "custom_field",
+                                        "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv"
+                                    },
+                                    "condition": {
+                                        "type": "text",
+                                        "mode": "beginning_of_words",
+                                        "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                                    }
+                                }
+                            ]
+                        }
+                    }
                 ]
-              }
             }
-          ]
-        }
-      },
-      {
-        "type": "has_related",
-        "this_object_type": "lead",
-        "related_object_type": "opportunity",
-        "related_query": {
-          "type": "and",
-          "queries": [
-            {
-              "type": "field_condition",
-              "field": {
-                "type": "custom_field",
-                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv"
-              },
-              "condition": {
-                "type": "text",
-                "mode": "beginning_of_words",
-                "value": "31881b5d-c468-407e-b446-21222d0ea498"
-              }
-            }
-          ]
-        }
-      }
-    ]
-  },
-  "type": "lead",
-  "limit": 3000
+        ]
+    },
+    "type": "lead",
+    "limit": 3000
 }
+
 
 
 
