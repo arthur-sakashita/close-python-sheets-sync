@@ -18,6 +18,16 @@ CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 # -----------------------------
 
 GOOGLE_SA_FILE = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+
+with open(GOOGLE_SA_FILE, "r") as f:
+    service_account_info = json.load(f)
+
+print("DEBUG: Loaded service account email →", service_account_info.get("client_email"))
+
+credentials = Credentials.from_service_account_info(
+    service_account_info,
+    scopes=["https://www.googleapis.com/auth/spreadsheets"]
+)
 SHEET_ID = os.getenv("SHEET_ID")
 
 TAB_NAME = "Sheet11"  # Google Sheets tab name
