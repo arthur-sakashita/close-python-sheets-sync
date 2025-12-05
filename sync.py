@@ -33,18 +33,14 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 BLOOMFIRE_FILTER = {
     "query": {
-        "negate": "false",
         "queries": [
             {
-                "negate": "false",
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
-                "negate": "false",
                 "queries": [
                     {
-                        "negate": "false",
                         "queries": [
                             {
                                 "condition": {
@@ -57,7 +53,6 @@ BLOOMFIRE_FILTER = {
                                     "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                     "type": "custom_field"
                                 },
-                                "negate": "false",
                                 "type": "field_condition"
                             }
                         ],
