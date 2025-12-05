@@ -28,143 +28,6 @@ gc = gspread.authorize(credentials)
 SHEET_ID = os.getenv("SHEET_ID")
 SHEET_NAME = "Sheet11"
 
-
-# =============================================================================
-# 🔍 JSON FILTER (REMOVE _limit AND cursor)
-# =============================================================================
-BLOOMFIRE_FILTER = {
-    "query": {
-        "negate": False,
-        "queries": [
-            {
-                "negate": False,
-                "object_type": "lead",
-                "type": "object_type"
-            },
-            {
-                "negate": False,
-                "queries": [
-                    {
-                        "negate": False,
-                        "queries": [
-                            {
-                                "negate": False,
-                                "queries": [
-                                    {
-                                        "condition": {
-                                            "type": "term",
-                                            "values": [
-                                                "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                            ]
-                                        },
-                                        "field": {
-                                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                            "type": "custom_field"
-                                        },
-                                        "negate": False,
-                                        "type": "field_condition"
-                                    }
-                                ],
-                                "type": "or"
-                            },
-                            {
-                                "negate": False,
-                                "related_object_type": "opportunity",
-                                "related_query": {
-                                    "negate": False,
-                                    "queries": [
-                                        {
-                                            "condition": {
-                                                "type": "term",
-                                                "values": [
-                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
-                                                ]
-                                            },
-                                            "field": {
-                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
-                                                "type": "custom_field"
-                                            },
-                                            "negate": False,
-                                            "type": "field_condition"
-                                        },
-                                        {
-                                            "condition": {
-                                                "object_ids": [
-                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
-                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
-                                                ],
-                                                "reference_type": "user_or_group",
-                                                "type": "reference"
-                                            },
-                                            "field": {
-                                                "field_name": "created_by",
-                                                "object_type": "opportunity",
-                                                "type": "regular_field"
-                                            },
-                                            "negate": False,
-                                            "type": "field_condition"
-                                        }
-                                    ],
-                                    "type": "and"
-                                },
-                                "this_object_type": "lead",
-                                "type": "has_related"
-                            },
-                            {
-                                "negate": False,
-                                "related_object_type": "opportunity",
-                                "related_query": {
-                                    "negate": False,
-                                    "queries": [
-                                        {
-                                            "condition": {
-                                                "mode": "beginning_of_words",
-                                                "type": "text",
-                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
-                                            },
-                                            "field": {
-                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
-                                                "type": "custom_field"
-                                            },
-                                            "negate": False,
-                                            "type": "field_condition"
-                                        },
-                                        {
-                                            "condition": {
-                                                "object_ids": [
-                                                    "user_AYrfFtTHbHWNRcNxtyYUEQH02YeZl0agcZ7JxPnuLz9",
-                                                    "user_Ww7Dy598hUnviVpvMMUHRBCt6GELbfwzn4IpoQelyiL"
-                                                ],
-                                                "reference_type": "user_or_group",
-                                                "type": "reference"
-                                            },
-                                            "field": {
-                                                "field_name": "created_by",
-                                                "object_type": "opportunity",
-                                                "type": "regular_field"
-                                            },
-                                            "negate": False,
-                                            "type": "field_condition"
-                                        }
-                                    ],
-                                    "type": "and"
-                                },
-                                "this_object_type": "lead",
-                                "type": "has_related"
-                            }
-                        ],
-                        "type": "or"
-                    }
-                ],
-                "type": "and"
-            }
-        ],
-        "type": "and"
-    },
-    "sort": []
-}
-
-
 # Load list of searches from external JSON
 with open("searches.json", "r") as f:
     SEARCHES = json.load(f)
@@ -219,31 +82,28 @@ def main():
     sheet = gc.open_by_key(SHEET_ID).worksheet(SHEET_NAME)
 
     for search in SEARCHES:
-    name = search["name"]
-    cell = search["cell"]
+        name = search["name"]
+        cell = search["cell"]
 
-    # Load filter JSON file
-    filter_path = os.path.join("filters", search["filter_file"])
-    with open(filter_path, "r") as f:
-        json_filter = json.load(f)
+        # Load filter JSON file
+        filter_path = os.path.join("filters", search["filter_file"])
+        with open(filter_path, "r") as f:
+            json_filter = json.load(f)
 
-    print(f"📌 Processing search: {name}")
+        print(f"📌 Processing search: {name}")
 
-    count = run_close_query(json_filter)
+        count = run_close_query(json_filter)
 
-    if count is None:
-        print(f"❌ Error while processing {name}")
-        continue
+        if count is None:
+            print(f"❌ Error while processing {name}")
+            continue
 
-    print(f"   ✅ Leads matching filter: {count}")
-    print(f"   ✏️ Writing value to {SHEET_NAME} cell {cell}")
+        print(f"   ✅ Leads matching filter: {count}")
+        print(f"   ✏️ Writing value to {SHEET_NAME} cell {cell}")
 
-    sheet.update_acell(cell, count)
-
+        sheet.update_acell(cell, count)
 
     print("\n🎉 Sync complete.\n")
-
-
 
 if __name__ == "__main__":
     main()
