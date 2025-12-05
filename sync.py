@@ -33,7 +33,6 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 BLOOMFIRE_FILTER = {
     "query": {
-        "negate": false,
         "queries": [
             {
                 "negate": false,
