@@ -31,22 +31,23 @@ SHEET_NAME = "Sheet11"
 # =============================================================================
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
-BLOOMFIRE_FILTER = {
+BLOOMFIRE_FILTER ={
     "query": {
+        "negate": False,
         "queries": [
             {
-                "negate": false,
+                "negate": False,
                 "object_type": "lead",
                 "type": "object_type"
             },
             {
-                "negate": false,
+                "negate": False,
                 "queries": [
                     {
-                        "negate": false,
+                        "negate": False,
                         "queries": [
                             {
-                                "negate": false,
+                                "negate": False,
                                 "queries": [
                                     {
                                         "condition": {
@@ -59,17 +60,17 @@ BLOOMFIRE_FILTER = {
                                             "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                             "type": "custom_field"
                                         },
-                                        "negate": false,
+                                        "negate": False,
                                         "type": "field_condition"
                                     }
                                 ],
                                 "type": "or"
                             },
                             {
-                                "negate": false,
+                                "negate": False,
                                 "related_object_type": "opportunity",
                                 "related_query": {
-                                    "negate": false,
+                                    "negate": False,
                                     "queries": [
                                         {
                                             "condition": {
@@ -82,7 +83,7 @@ BLOOMFIRE_FILTER = {
                                                 "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
                                                 "type": "custom_field"
                                             },
-                                            "negate": false,
+                                            "negate": False,
                                             "type": "field_condition"
                                         }
                                     ],
@@ -92,10 +93,10 @@ BLOOMFIRE_FILTER = {
                                 "type": "has_related"
                             },
                             {
-                                "negate": false,
+                                "negate": False,
                                 "related_object_type": "opportunity",
                                 "related_query": {
-                                    "negate": false,
+                                    "negate": False,
                                     "queries": [
                                         {
                                             "condition": {
@@ -107,7 +108,7 @@ BLOOMFIRE_FILTER = {
                                                 "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
                                                 "type": "custom_field"
                                             },
-                                            "negate": false,
+                                            "negate": False,
                                             "type": "field_condition"
                                         }
                                     ],
@@ -125,7 +126,7 @@ BLOOMFIRE_FILTER = {
         ],
         "type": "and"
     },
-    "include_counts": true,
+    "include_counts": True,
     "results_limit": 0,
     "sort": []
 }
