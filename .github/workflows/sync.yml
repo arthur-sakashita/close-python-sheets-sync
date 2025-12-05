@@ -22,11 +22,15 @@ jobs:
         run: |
           pip install requests gspread google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
+      - name: Create Google Service Account file
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          echo "$GOOGLE_SERVICE_ACCOUNT_JSON" > service-account.json
+
       - name: Run sync script
         env:
           CLOSE_API_KEY: ${{ secrets.CLOSE_API_KEY }}
-          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
         run: |
-          echo "$GOOGLE_SERVICE_ACCOUNT" > service-account.json
           python sync.py
