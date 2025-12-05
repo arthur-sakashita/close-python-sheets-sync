@@ -77,6 +77,7 @@ BLOOMFIRE_FILTER = {
     },
     "include_counts": True,
     "results_limit": 20,
+    "_limit":20,
     "sort": []
 }
 
