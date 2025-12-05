@@ -17,7 +17,7 @@ CLOSE_API_URL = "https://api.close.com/api/v1/data/search/"
 # Google Sheets Setup
 # -----------------------------
 
-GOOGLE_SA_FILE = os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+GOOGLE_SA_FILE = "service-account.json"
 
 with open(GOOGLE_SA_FILE, "r") as f:
     service_account_info = json.load(f)
