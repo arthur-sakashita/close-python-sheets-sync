@@ -64,7 +64,7 @@ BLOOMFIRE_FILTER = {
         ],
         "type": "and"
     },
-    "results_limit": 0,
+    "results_limit": 1000,
     "sort": []
 }
 
