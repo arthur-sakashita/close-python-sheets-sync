@@ -161,7 +161,7 @@ BLOOMFIRE_FILTER = {
         "type": "and"
     },
     "include_counts": True,
-    "results_limit": 0,
+    "results_limit": 199,
     "_limit":199,
     "sort": []
 }
