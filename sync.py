@@ -32,55 +32,121 @@ SHEET_NAME = "Sheet11"
 # 🔍 CORRECT BLOOMFIRE JSON FILTER (Matches UI Exactly)
 # =============================================================================
 BLOOMFIRE_FILTER = {
+    "limit": null,
     "query": {
-        "type": "or",
+        "negate": false,
         "queries": [
             {
-                "type": "field_condition",
-                "field": {
-                    "type": "custom_field",
-                    "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
-                },
-                "condition": {
-                    "type": "term",
-                    "values": ["Bloomfire - Principal Search Engineer (OpenSearch)"]
-                }
+                "negate": false,
+                "object_type": "lead",
+                "type": "object_type"
             },
             {
-                "type": "has_related",
-                "this_object_type": "lead",
-                "related_object_type": "opportunity",
-                "related_query": {
-                    "type": "field_condition",
-                    "field": {
-                        "type": "custom_field",
-                        "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv"
-                    },
-                    "condition": {
-                        "type": "term",
-                        "values": ["Bloomfire - Principal Search Engineer (OpenSearch)"]
+                "negate": false,
+                "queries": [
+                    {
+                        "negate": false,
+                        "queries": [
+                            {
+                                "negate": false,
+                                "queries": [
+                                    {
+                                        "condition": {
+                                            "type": "term",
+                                            "values": [
+                                                "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                            ]
+                                        },
+                                        "field": {
+                                            "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                            "type": "custom_field"
+                                        },
+                                        "negate": false,
+                                        "type": "field_condition"
+                                    }
+                                ],
+                                "type": "or"
+                            },
+                            {
+                                "negate": false,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": false,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "type": "term",
+                                                "values": [
+                                                    "Bloomfire - Principal Search Engineer (OpenSearch)"
+                                                ]
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_e97HRUrCmP2j7g0tzmTxXWMFr2qGR0jR7nmRu4KR1qv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": false,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            },
+                            {
+                                "negate": false,
+                                "related_object_type": "opportunity",
+                                "related_query": {
+                                    "negate": false,
+                                    "queries": [
+                                        {
+                                            "condition": {
+                                                "mode": "beginning_of_words",
+                                                "type": "text",
+                                                "value": "31881b5d-c468-407e-b446-21222d0ea498"
+                                            },
+                                            "field": {
+                                                "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv",
+                                                "type": "custom_field"
+                                            },
+                                            "negate": false,
+                                            "type": "field_condition"
+                                        }
+                                    ],
+                                    "type": "and"
+                                },
+                                "this_object_type": "lead",
+                                "type": "has_related"
+                            }
+                        ],
+                        "type": "or"
                     }
-                }
-            },
-            {
-                "type": "has_related",
-                "this_object_type": "lead",
-                "related_object_type": "opportunity",
-                "related_query": {
-                    "type": "field_condition",
-                    "field": {
-                        "type": "custom_field",
-                        "custom_field_id": "cf_cDMde58MrqXZmWC8UtAc64BlMP7b0HPGEhedozsyIhv"
-                    },
-                    "condition": {
-                        "type": "text",
-                        "mode": "beginning_of_words",
-                        "value": "31881b5d-c468-407e-b446-21222d0ea498"
-                    }
-                }
+                ],
+                "type": "and"
             }
-        ]
+        ],
+        "type": "and"
     },
+    "results_limit": null,
+    "sort": [
+        {
+            "direction": "desc",
+            "field": {
+                "field_name": "max_opportunity_annualized_annualized_value",
+                "object_type": "lead",
+                "type": "regular_field"
+            }
+        },
+        {
+            "direction": "asc",
+            "field": {
+                "field_name": "date_updated",
+                "object_type": "lead",
+                "type": "regular_field"
+            }
+        }
+    ]
+}
     "limit": 5000
 }
 
